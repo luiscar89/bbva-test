@@ -18,4 +18,12 @@ describe('Test of WeatherComponent', () => {
   it('The WeatherComponent should be created', () => {
     expect(component).toBeTruthy();
   });
+
+  it('Checking change of color onChange', () => {
+    const color = 'white';
+    component.weatherData.temperature = 34;
+    component.ngOnChanges();
+    expect(component.numberColor).not.toEqual(color);
+  })
+
 });
