@@ -1,8 +1,13 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { City, SAVE_WEATHER_CITY_KEY, SELECTED_CITY_KEY, WeatherInfo } from 'src/app/utils/interfaces';
+import { City, WeatherInfo } from 'src/app/utils/interfaces';
 import { WEATHER_ICON_MAP } from 'src/app/utils/weatherIcon.map';
+import {
+  NO_INTERNET_ERROR,
+  SAVE_WEATHER_CITY_KEY,
+  SELECTED_CITY_KEY,
+} from '../../utils/constants';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +19,7 @@ export class WeatherService {
   constructor(public http: HttpClient) {}
 
   getCityWeather(latitude: number, longitude: number): Observable<any> {
-    const formatedData = this.http
+    return this.http
       .get(
         `${this.baseUrl}/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=6acdae30c716fbdd1fa0839e58e341d7&units=metric`
       )
@@ -22,9 +27,14 @@ export class WeatherService {
         catchError((err) => {
           this.errorData = true;
           let filterCity;
-          if (err.name === 'HttpErrorResponse') {
-            const savedWeatherCities = JSON.parse(localStorage.getItem(SAVE_WEATHER_CITY_KEY) as string);
-            filterCity = savedWeatherCities.filter((city: City) => city.name === localStorage.getItem(SELECTED_CITY_KEY));
+          if (err.name === NO_INTERNET_ERROR) {
+            const savedWeatherCities = JSON.parse(
+              localStorage.getItem(SAVE_WEATHER_CITY_KEY) as string
+            );
+            filterCity = savedWeatherCities.filter(
+              (city: City) =>
+                city.name === localStorage.getItem(SELECTED_CITY_KEY)
+            );
 
             return filterCity;
           }
@@ -34,29 +44,25 @@ export class WeatherService {
           return this.parseData(response);
         })
       );
-
-    return formatedData;
   }
 
   getCityCoordinates(city: City): Observable<any> {
-    const coordinates = this.http
+    return this.http
       .get(
         `${this.baseUrl}/geo/1.0/direct?q=${city.capital},${city.iso2}&limit=1&appid=6acdae30c716fbdd1fa0839e58e341d7`
       )
       .pipe(
         catchError(() => {
-          return of ([]);
+          return of([]);
         }),
         map((coordinates: any) => {
           if (coordinates.length) {
-            return coordinates
+            return coordinates;
           } else {
-            return []
+            return [];
           }
         })
       );
-
-    return coordinates;
   }
 
   parseData(dataRaw: any): WeatherInfo {
@@ -65,13 +71,18 @@ export class WeatherService {
       return dataRaw;
     }
 
-    const formatedData =  {
+    const formatedData = {
       name: dataRaw?.name,
       temperature: dataRaw.main?.temp ? Math.round(dataRaw.main?.temp) : NaN,
-      tempMax: dataRaw.main?.temp_max ? Math.round(dataRaw.main?.temp_max) : NaN,
-      tempMin: dataRaw.main?.temp_min ? Math.round(dataRaw.main?.temp_min) : NaN,
+      tempMax: dataRaw.main?.temp_max
+        ? Math.round(dataRaw.main?.temp_max)
+        : NaN,
+      tempMin: dataRaw.main?.temp_min
+        ? Math.round(dataRaw.main?.temp_min)
+        : NaN,
       icon: dataRaw.weather
-        ? WEATHER_ICON_MAP.get(dataRaw.weather[0].main) || WEATHER_ICON_MAP.get('no data')
+        ? WEATHER_ICON_MAP.get(dataRaw.weather[0].main) ||
+          WEATHER_ICON_MAP.get('no data')
         : '',
       lat: dataRaw.coord ? dataRaw.coord.lat : 0,
       long: dataRaw.coord ? dataRaw.coord.lon : 0,

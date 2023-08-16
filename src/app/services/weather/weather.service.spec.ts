@@ -3,13 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import { of } from 'rxjs';
-import { SAVE_WEATHER_CITY_KEY, WeatherInfo } from 'src/app/utils/interfaces';
+import { WeatherInfo } from 'src/app/utils/interfaces';
 import { WeatherService } from './weather.service';
-
-import {
-  Observable,
-  catchError
-} from 'rxjs';
 
 describe('WeatherService', () => {
   let service: WeatherService;
@@ -22,24 +17,24 @@ describe('WeatherService', () => {
       tempMin: 21.1,
       temperature: 21,
       lat: 111,
-      long: 111
+      long: 111,
     },
   ];
 
-  const cityWeatherMockCity =  {
+  const cityWeatherMockCity = {
     icon: 'light_mode',
     name: 'Kabul',
     tempMax: 21.1,
     tempMin: 21.1,
     temperature: 21,
     lat: 111,
-    long: 111
-  }
+    long: 111,
+  };
 
   const cityType = {
     iso2: 'AF',
-    capital: 'Kabul'
-  }
+    capital: 'Kabul',
+  };
 
   const expectedCoordinatesResponse = [
     {
@@ -78,7 +73,9 @@ describe('WeatherService', () => {
       .getCityWeather(mockCoordinates.latitude, mockCoordinates.longitude)
       .subscribe({
         next: (weather) => {
-          expect(weather).withContext('expected weather info').toEqual(cityWeatherArr);
+          expect(weather)
+            .withContext('expected weather info')
+            .toEqual(cityWeatherArr);
           done();
         },
         error: done.fail,
@@ -86,35 +83,32 @@ describe('WeatherService', () => {
     expect(httpClientSpy.get.calls.count()).withContext('one call').toBe(1);
   });
 
-
   it('should return coordinates (HttpClient called once)', (done: DoneFn) => {
     httpClientSpy.get.and.returnValue(of(expectedCoordinatesResponse));
 
-    service
-      .getCityCoordinates(cityType)
-      .subscribe({
-        next: (coordinates) => {
-          expect(coordinates).withContext('expected weather info').toEqual(expectedCoordinatesResponse);
-          done();
-        },
-        error: done.fail,
-      });
+    service.getCityCoordinates(cityType).subscribe({
+      next: (coordinates) => {
+        expect(coordinates)
+          .withContext('expected weather info')
+          .toEqual(expectedCoordinatesResponse);
+        done();
+      },
+      error: done.fail,
+    });
     expect(httpClientSpy.get.calls.count()).withContext('one call').toBe(1);
   });
 
   it('should fail returning coordinates (HttpClient called once)', (done: DoneFn) => {
     httpClientSpy.get.and.returnValue(of([]));
 
-    service
-      .getCityCoordinates(cityType)
-      .subscribe({
-        next: (coordinates) => {
-          expect(coordinates).withContext('expected weather info').toEqual([]);
-          done();
-        },
-        error: done.fail,
-      });
-    
+    service.getCityCoordinates(cityType).subscribe({
+      next: (coordinates) => {
+        expect(coordinates).withContext('expected weather info').toEqual([]);
+        done();
+      },
+      error: done.fail,
+    });
+
     expect(httpClientSpy.get.calls.count()).withContext('one call').toBe(1);
   });
 });

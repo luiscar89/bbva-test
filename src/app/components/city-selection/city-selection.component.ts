@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { City, SELECTED_CITY_KEY } from '../../utils/interfaces';
+import { SELECTED_CITY_KEY } from '../../utils/constants';
+import { City } from '../../utils/interfaces';
 
 @Component({
   selector: 'app-city-selection',
   templateUrl: './city-selection.component.html',
-  styleUrls: ['./city-selection.component.scss']
+  styleUrls: ['./city-selection.component.scss'],
 })
 export class CitySelectionComponent {
   @Input() cities: City[] = [];

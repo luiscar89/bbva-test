@@ -1,14 +1,9 @@
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
-import {
-  Observable,
-  Subject,
-  map,
-  switchMap,
-  takeUntil
-} from 'rxjs';
+import { Observable, Subject, map, switchMap, takeUntil } from 'rxjs';
 import { CitiesService } from 'src/app/services/cities/cities.service';
 import { WeatherService } from 'src/app/services/weather/weather.service';
-import { City, SAVE_WEATHER_CITY_KEY, WeatherInfo } from 'src/app/utils/interfaces';
+import { City, WeatherInfo } from 'src/app/utils/interfaces';
+import { SAVE_WEATHER_CITY_KEY } from '../../utils/constants';
 
 @Component({
   selector: 'app-widget-weather',
@@ -36,7 +31,9 @@ export class WidgetWeatherPageComponent implements OnDestroy, AfterViewInit {
     switchMap((currentCity) =>
       this.weatherSrv.getCityCoordinates(currentCity).pipe(
         map((cityCoor) => {
-          return cityCoor.length ? { lat: cityCoor[0]?.lat, lon: cityCoor[0].lon } : { lat: 0, lon: 0 };
+          return cityCoor.length
+            ? { lat: cityCoor[0]?.lat, lon: cityCoor[0].lon }
+            : { lat: 0, lon: 0 };
         }),
         switchMap((cityCoor) => {
           return this.weatherSrv.getCityWeather(cityCoor?.lat, cityCoor?.lon);
@@ -51,12 +48,7 @@ export class WidgetWeatherPageComponent implements OnDestroy, AfterViewInit {
   ) {
     this.weather$.pipe(takeUntil(this.destroy$)).subscribe((weather) => {
       this.weatherInfo = weather;
-      
       this.saveOnLocalStorage(this.weatherInfo);
-    });
-
-    this.cities$.pipe(takeUntil(this.destroy$)).subscribe((capitals) => {
-      this.allCapitals = capitals;
     });
   }
 
@@ -70,14 +62,23 @@ export class WidgetWeatherPageComponent implements OnDestroy, AfterViewInit {
   }
 
   saveOnLocalStorage(formatedData: WeatherInfo): void {
-    const getLocalStorageInfo = localStorage.getItem(SAVE_WEATHER_CITY_KEY) && JSON.parse(localStorage.getItem(SAVE_WEATHER_CITY_KEY) as string);
+    const getLocalStorageInfo =
+      localStorage.getItem(SAVE_WEATHER_CITY_KEY) &&
+      JSON.parse(localStorage.getItem(SAVE_WEATHER_CITY_KEY) as string);
 
-    const alreadyExist = getLocalStorageInfo && getLocalStorageInfo.some((city: any) => city.name === formatedData.name);
-  
+    const alreadyExist =
+      getLocalStorageInfo &&
+      getLocalStorageInfo.some((city: any) => city.name === formatedData.name);
+
     if (!alreadyExist) {
-      const savedWeatherCities = getLocalStorageInfo ? [...getLocalStorageInfo, formatedData] : [formatedData];
-      localStorage.setItem(SAVE_WEATHER_CITY_KEY, JSON.stringify(savedWeatherCities));
-    } 
+      const savedWeatherCities = getLocalStorageInfo
+        ? [...getLocalStorageInfo, formatedData]
+        : [formatedData];
+      localStorage.setItem(
+        SAVE_WEATHER_CITY_KEY,
+        JSON.stringify(savedWeatherCities)
+      );
+    }
   }
 
   setCurrentCity(e: any): void {

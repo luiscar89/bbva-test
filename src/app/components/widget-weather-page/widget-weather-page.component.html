@@ -1,6 +1,6 @@
 <main class="widget-container">
     <h1>Select your city to know the current weather</h1>
-    <section *ngIf="allCapitals">
+    <section *ngIf="cities$ | async as allCapitals">
         <app-city-selection (setCity)="setCurrentCity($event)" [cities]="allCapitals"></app-city-selection>
     </section>
 

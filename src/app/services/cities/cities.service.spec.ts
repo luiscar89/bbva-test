@@ -4,7 +4,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CitiesService } from './cities.service';
 
 import { of } from 'rxjs';
-import { citiesArr } from 'src/app/utils/interfaces';
+import { citiesArr } from '../../utils/demo-data';
 
 describe('Test for cities service. To check if data is getting correctly', () => {
   let service: CitiesService;
@@ -12,10 +12,10 @@ describe('Test for cities service. To check if data is getting correctly', () =>
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientModule]
+      imports: [HttpClientModule],
     });
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get'])
-    service = new CitiesService(httpClientSpy)
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    service = new CitiesService(httpClientSpy);
   });
 
   it('The service should be create', () => {
@@ -24,19 +24,14 @@ describe('Test for cities service. To check if data is getting correctly', () =>
 
   it('should return city capitals (HttpClient called once)', (done: DoneFn) => {
     httpClientSpy.get.and.returnValue(of(citiesArr));
-  
+
     service.getCapitalCities().subscribe({
-      next: capitals => {
-        expect(capitals)
-          .withContext('expected capitals')
-          .toEqual(citiesArr);
+      next: (capitals) => {
+        expect(capitals).withContext('expected capitals').toEqual(citiesArr);
         done();
       },
-      error: done.fail
+      error: done.fail,
     });
-    expect(httpClientSpy.get.calls.count())
-      .withContext('one call')
-      .toBe(1);
+    expect(httpClientSpy.get.calls.count()).withContext('one call').toBe(1);
   });
-
 });
