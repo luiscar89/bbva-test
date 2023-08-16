@@ -6,7 +6,8 @@ import { WeatherInfo } from 'src/app/utils/interfaces';
   templateUrl: './weather.component.html',
   styleUrls: ['./weather.component.scss'],
 })
-export class WeatherComponent {
+export class WeatherComponent implements OnChanges {
+  numberColor = 'white';
   @Input() weatherData: WeatherInfo = {
     temperature: 0,
     tempMax: 0,
@@ -20,4 +21,16 @@ export class WeatherComponent {
   @Input() error = false;
 
   constructor() {}
+
+
+ngOnChanges(): void {
+    if (this.weatherData.temperature >= 33) {
+      this.numberColor = 'red';
+    } else if (this.weatherData.temperature > 25 && this.weatherData.tempMax < 33) {
+      this.numberColor = 'yellow';
+    } else {
+      this.numberColor = 'white';
+    }
+  }
+
 }

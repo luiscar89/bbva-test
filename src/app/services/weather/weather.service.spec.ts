@@ -21,17 +21,7 @@ describe('WeatherService', () => {
     },
   ];
 
-  const cityWeatherMockCity = {
-    icon: 'light_mode',
-    name: 'Kabul',
-    tempMax: 21.1,
-    tempMin: 21.1,
-    temperature: 21,
-    lat: 111,
-    long: 111,
-  };
-
-  const cityType = {
+  const cityMockInfo = {
     iso2: 'AF',
     capital: 'Kabul',
   };
@@ -51,7 +41,6 @@ describe('WeatherService', () => {
     longitude: 69.1777,
   };
 
-  const error = 'cannot retrieve the data required';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -86,7 +75,7 @@ describe('WeatherService', () => {
   it('should return coordinates (HttpClient called once)', (done: DoneFn) => {
     httpClientSpy.get.and.returnValue(of(expectedCoordinatesResponse));
 
-    service.getCityCoordinates(cityType).subscribe({
+    service.getCityCoordinates(cityMockInfo).subscribe({
       next: (coordinates) => {
         expect(coordinates)
           .withContext('expected weather info')
@@ -101,7 +90,7 @@ describe('WeatherService', () => {
   it('should fail returning coordinates (HttpClient called once)', (done: DoneFn) => {
     httpClientSpy.get.and.returnValue(of([]));
 
-    service.getCityCoordinates(cityType).subscribe({
+    service.getCityCoordinates(cityMockInfo).subscribe({
       next: (coordinates) => {
         expect(coordinates).withContext('expected weather info').toEqual([]);
         done();

@@ -6,7 +6,7 @@
     </div>
     <div class="bottom-container">
       <small>Temperature</small>
-      <p [ngClass]="{'red': weatherData.temperature > 30 , 'yellow': weatherData.temperature > 25 && weatherData.temperature < 30}">{{ weatherData.temperature }}º</p>
+      <p [class]="numberColor">{{ weatherData.temperature }}º</p>
       <div class="max-min-block">
         <div>
           <small>Max Temp</small>
@@ -21,7 +21,7 @@
   </section>
   <section>
     <ng-template #errorBlock>
-      <p>At this moment We don't have weather information for this city.</p>
+      <p>At this moment we don't have weather information for this city.</p>
     </ng-template>
   </section>
 </main>
