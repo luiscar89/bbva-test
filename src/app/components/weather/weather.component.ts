@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { WeatherInfo } from 'src/app/utils/interfaces';
 
 @Component({
@@ -15,22 +21,23 @@ export class WeatherComponent implements OnChanges {
     icon: '',
     name: '',
     lat: 0,
-    long: 0
+    long: 0,
   };
   @Input() cityName: string = 'Kabul';
   @Input() error = false;
 
   constructor() {}
 
-
-ngOnChanges(): void {
+  ngOnChanges(): void {
     if (this.weatherData.temperature >= 33) {
       this.numberColor = 'red';
-    } else if (this.weatherData.temperature > 25 && this.weatherData.tempMax < 33) {
+    } else if (
+      this.weatherData.temperature > 25 &&
+      this.weatherData.tempMax < 33
+    ) {
       this.numberColor = 'yellow';
     } else {
       this.numberColor = 'white';
     }
   }
-
 }
